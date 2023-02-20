@@ -1,8 +1,9 @@
-import arcade
+import arcade 
 import math
 
+
 # --- Constants ---
-SCREEN_WIDTH = 1000
+SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 1000
 SCREEN_TITLE = "Cue ball / Billiards"
 
@@ -25,6 +26,7 @@ class Billiards(arcade.Window):
         self.mouse_pos_end = {"x":None, "y":None}
         self.is_dragging_player_cue_ball = None
 
+
     def setup(self):
         """ setup for scene"""
         
@@ -35,7 +37,7 @@ class Billiards(arcade.Window):
         self.board_sprite.center_y = 500
         
         # cueballs list
-        self.cue_balls_list = arcade.SpriteList(use_spatial_hash=False)
+        self.cue_balls_list = arcade.SpriteList(use_spatial_hash=True)
         
         b_size = 140*BALLS_SCALING
         balls_start_pos = [
@@ -66,8 +68,10 @@ class Billiards(arcade.Window):
         self.board_sprite.draw()
         self.cue_balls_list.draw()
     
+
     def on_mouse_motion(self, x, y, dx, dy):
         """ called when mouse moves """
+
         
     def on_mouse_press(self, x, y, button, modifiers):
         """ called when mouse presed """
@@ -78,18 +82,29 @@ class Billiards(arcade.Window):
             self.mouse_pos_begin["y"] = y
             self.is_dragging_player_cue_ball = True
     
+    def move_cueball(self, index, dx, dy):
+        while dx > 0:
+            dx -= 0.01
+            dy -= 0.01
+            print(dx, dy)
+            self.cue_balls_list[15].center_x += dx
+            self.cue_balls_list[15].center_y += dy
+            self.cue_balls_list.draw()
+            arcade.unschedule(lambda: self.move_cueball(15, dx, dy))
+
+            
     def on_mouse_release(self, x, y, button, modifiers):
         if self.is_dragging_player_cue_ball:
             self.mouse_pos_end["x"] = x
             self.mouse_pos_end["y"] = y
+            
             print(self.mouse_pos_begin, self.mouse_pos_end)
-            angle = math.atan2(self.mouse_pos_end["y"] - self.mouse_pos_begin["y"], self.mouse_pos_end["x"] - self.mouse_pos_begin["x"]) * 180 / math.pi
+            
             dy = self.mouse_pos_end["y"] - self.mouse_pos_begin["y"]
             dx = self.mouse_pos_end["x"] - self.mouse_pos_begin["x"]
-            print(f"angle: {angle}, distance: {dy, dx}")
             
-            self.cue_balls_list[15].center_x += math.cos(angle)*dx
-            self.cue_balls_list[15].center_y += math.sin(angle)*dy
+            arcade.schedule(self.move_cueball(15, dx, dy), 1)
+            arcade.unschedule(self.move_cueball(15, dx, dy))
             self.is_dragging_player_cue_ball = None
 
 def main():
