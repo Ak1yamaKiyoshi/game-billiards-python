@@ -62,12 +62,10 @@ class Billiards(arcade.Window):
         self.player1_stick_sprite = arcade.Sprite()
 
     
-    def on_draw(self):
-        """ render everything """
+    def draw(self): 
         arcade.start_render()
         self.board_sprite.draw()
         self.cue_balls_list.draw()
-    
 
     def on_mouse_motion(self, x, y, dx, dy):
         """ called when mouse moves """
@@ -84,6 +82,7 @@ class Billiards(arcade.Window):
     
     def move_cueball(self, index, dx, dy):
         while dx > 0:
+            self.draw()
             dx -= 0.01
             dy -= 0.01
             print(dx, dy)
@@ -114,3 +113,25 @@ def main():
     
 if __name__ == "__main__":
     main()
+    
+    
+""" 
+import asyncio
+
+async def snmp():
+    print("Doing the snmp thing")
+    await asyncio.sleep(1)
+
+async def proxy():
+    print("Doing the proxy thing")
+    await asyncio.sleep(2)
+
+async def main():
+    while True:
+        await snmp()
+        await proxy()
+
+loop = asyncio.get_event_loop()
+loop.create_task(main())
+loop.run_forever()
+"""
